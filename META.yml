@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Net-PcapWriter
-version:            0.71
+version:            0.710_1
 abstract:           ~
 author:  []
 license:            perl
@@ -9,7 +9,8 @@ configure_requires:
     ExtUtils::MakeMaker:  0
 build_requires:
     ExtUtils::MakeMaker:  0
-requires:  {}
+requires:
+    Socket6:  0
 no_index:
     directory:
         - t
