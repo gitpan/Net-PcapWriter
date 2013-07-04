@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Net-PcapWriter
-version:            0.710_1
+version:            0.710_2
 abstract:           ~
 author:  []
 license:            perl
