@@ -4,8 +4,9 @@ package Net::PcapWriter;
 use Time::HiRes 'gettimeofday';
 use Net::PcapWriter::TCP;
 use Net::PcapWriter::UDP;
+use Net::PcapWriter::ICMP_Echo;
 
-our $VERSION = '0.712';
+our $VERSION = '0.713';
 
 sub new {
     my ($class,$file) = @_;
@@ -97,6 +98,12 @@ sub udp_conn {
     return Net::PcapWriter::UDP->new($self,$src,$sport,$dst,$dport);
 }
 
+# return new ICMP_Echo "connection" object
+sub icmp_echo_conn {
+    my ($self,$src,$dst,$id) = @_;
+    return Net::PcapWriter::ICMP_Echo->new($self,$src,$dst,$id);
+}
+
 1;
 
 __END__
@@ -133,6 +140,13 @@ Net::PcapWriter - simple creation of pcap files from code
  $conn = $writer->udp_conn('dead::beaf',1234,'beaf::dead',53);
  $conn->write(0,"....");
  $conn->write(1,"....");
+
+ # write a ping exchange (works also with IPv6)
+ $conn = $writer->icmp_echo_conn('1.2.3.4','5.6.7.8',10);
+ $conn->ping(1,"foo");
+ $conn->ping(2,"bar");
+ $conn->pong(1,"foo");
+
 
 =head1 DESCRIPTION
 
@@ -193,6 +207,23 @@ methods:
 
 Will write the given data for the direction C<$dir> (0 are data from client to
 server, 1 the other way).
+
+=item $writer->icmp_echo_conn($src,$dst,[$id])
+
+Will return C<Net::PcapWriter::ICMP_Echo> object which provides a connection
+with echo request and reply using the identifier $id (default 0). This object
+can handle echo request/reply for ICMP and ICMPv6.
+It has the following methods:
+
+=item $echo->ping($seq,$data,[$timestamp])
+
+Will write an ICMP echo request from connection source to destination with
+sequence $seq and data $data.
+
+=item $echo->pong($seq,$data,[$timestamp])
+
+Will write an ICMP echo reply from connection destination to source with
+sequence $seq and data $data.
 
 =back
 

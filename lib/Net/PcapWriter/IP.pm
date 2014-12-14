@@ -27,7 +27,7 @@ BEGIN {
 
 # construct IPv4 packet
 sub ip4_packet {
-    my ($data,$src,$dst,$protocol,$chksum_offset) = @_;
+    my ($data,$src,$dst,$protocol,$chksum_offset,$no_pseudo_header) = @_;
     my $hdr = pack('CCnnnCCna4a4',
 	0x45,             # version 4, len=5 (no options)
 	0,                # type of service
@@ -41,10 +41,11 @@ sub ip4_packet {
     );
 
     if (defined $chksum_offset) {
-	my $ckdata = substr($hdr,-8).pack('xCna*',
-	    $protocol,length($data),  # proto + len
-	    $data
-	);
+	my $ckdata = $no_pseudo_header ? $data : 
+	    substr($hdr,-8).pack('xCna*',
+		$protocol,length($data),  # proto + len
+		$data
+	    );
 	substr($data,$chksum_offset, 2) = pack('n',ip_chksum($ckdata));
     }
 
