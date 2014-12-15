@@ -21,4 +21,4 @@ requires:
   Socket6: 0
 resources:
   repository: https://github.com/noxxi/p5-net-pcapwriter
-version: 0.713
+version: 0.714
